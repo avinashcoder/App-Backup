@@ -1,6 +1,7 @@
 package com.rainbow.appbackupextrator.activity;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -116,15 +119,18 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < packs.size(); i++) {
             PackageInfo p = packs.get(i);
             // String description = (String) p.applicationInfo.loadDescription(pm);
-            String label = p.applicationInfo.loadLabel(pm).toString();
-            String packageName = p.packageName;
-            String versionName = p.versionName;
-            int versionCode = p.versionCode;
-            Drawable icon = p.applicationInfo.loadIcon(pm);
-            String filePath = p.applicationInfo.publicSourceDir.toString();
-            ApkListModel apkModel = new ApkListModel(label, filePath, icon,
-                    packageName, versionName, String.valueOf(versionCode));
-            apksList.add(apkModel);
+            if ((p.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0)
+            {
+                String label = p.applicationInfo.loadLabel(pm).toString();
+                String packageName = p.packageName;
+                String versionName = p.versionName;
+                int versionCode = p.versionCode;
+                Drawable icon = p.applicationInfo.loadIcon(pm);
+                String filePath = p.applicationInfo.publicSourceDir.toString();
+                ApkListModel apkModel = new ApkListModel(label, filePath, icon,
+                        packageName, versionName, String.valueOf(versionCode));
+                apksList.add(apkModel);
+            }
 //Continue to extract other info about the app...
         }
     }
